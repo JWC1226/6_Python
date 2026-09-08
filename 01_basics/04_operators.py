@@ -40,4 +40,45 @@ print(f"not >> {not False}")
 print(f"결과: {-5 <= a and a <= 5}")
 print(f"{-5 <= a <= 5}")    # Python 에서는 연쇄 비교가 가능하다 !
 
-# TODO: 멤버쉽 연산자..
+#26. 09. 08: 멤버쉽 연산자 ~
+print("=" * 60)
+print("멤버쉽 연산자(in)、식별 연산자(is)")
+print("=" * 60)
+
+members = ["사용자", "이고은", "최제욱"]
+print(f"> {members}")
+print(f"'사용자' 포함 여부 > {'사용자' in members}")
+print(f"'이용자' 포함 여부 > {'이용자' in members}")
+print(f"'관리자' 포함하지 않는지? > {'관리자' not in members}")
+print(f"{'ll' in 'hello'}")
+
+x = [1,2,3]
+y = [1,2,3]
+z = x
+print(f"x : {x} / y : {y} / z : {z}")
+print(f"배열 　값 비교: {x == y}")
+print(f"객체 주소 비교: {x is y}")
+print(f"x is z : {x is z}")
+
+# None 비교 시 is 사용을 권장
+data = None
+print(f"data is none? {data is None}")
+print(f"data is not none? {data is not None}")
+print()
+
+print("=" * 60)
+print("복합 대입 연산자")
+print("=" * 60)
+x = 10
+print(f"x : {x}")
+    # x = x + 5
+x += 5
+print(f"x += 5 : {x}")
+    # x = x - 5
+x -= 5
+print(f"x -= 5 : {x}")
+    # Python에서는 증감 연산자가 존재하지 않는다 ! (++、--)
+# 증가 연산자 (++): 1씩 증가
+x += 1
+# 감소 연산자 (--): 1씩 감소
+x -= 1
