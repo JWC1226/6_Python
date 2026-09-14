@@ -80,4 +80,3 @@ for amount in [5000, 50000, -1000]:
         print(f"[금액 오류] {e}")
     except NoBalanceError as e:
         print(f"[잔액 오류] {e}")
-
