@@ -57,26 +57,27 @@ class Account:
 
 acc = Account("은행장", 50000000)
 print(acc)
-# TODO: 마지막 반복문의 발생되는 예외를 처리
-for amount in [5000, 50000, -1000]:
-    try:
-        acc.withdraw(amount)
-        print(f"출금 성공: {amount:,}원, 잔액: {acc.balance:,}원")
-    except InvalidAmountError as e:
-        print(f"[금액 오류] {e}")
-    except NoBalanceError as e:
-        print(f"[잔액 오류] {e}")
 
 print("-" * 40)
-
 # TODO: 금액이 적을 경우
 acc = Account("사용자", 5000)
 print(acc)
 for amount in [5000, 50000, -1000]:
     try:
         acc.withdraw(amount)
-        print(f"출금 성공: {amount:,}원, 잔액: {acc.balance:,}원")
+        print(f"[출금 성공]: {amount:,}원, 잔액: {acc.balance:,}원")
     except InvalidAmountError as e:
         print(f"[금액 오류] {e}")
     except NoBalanceError as e:
         print(f"[잔액 오류] {e}")
+
+# TODO: 마지막 반복문의 발생되는 예외를 처리
+for amount in [5000, 50000, -1000]:
+    try:
+        acc.withdraw(amount)
+        print(f"[출금 성공]: {amount:,}원, 잔액: {acc.balance:,}원")
+    except InvalidAmountError as e:
+        print(f"[금액 오류] {e}")
+    except NoBalanceError as e:
+        print(f"[잔액 오류] {e}")
+
