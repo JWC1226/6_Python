@@ -44,3 +44,7 @@ print(f"name_link.get('href'): {name_link.get('href')}")    # .get() 메소드�
 print(f"name_link.get('href'): {name_link.get('href', '없음')}")    # .get() 메소드의 기본값을 설정
 
 # TODO: 첫 번째 행의 전체 데이터를 추출
+for sel in ["td.col-code", "td.col-name a", "td.col-sector", "td.col-price", "td.col-volume", "td.col-change", "td.col-market span"]:
+    tag = first.select_one(sel)
+    value = tag.get_text(strip=True) if tag else "없음"
+    print(f"{sel:<20} {value}")
