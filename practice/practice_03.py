@@ -1,8 +1,7 @@
 print("=" * 56)
 """
     실습용 사이트에서 종목 메뉴 페이지(SSR)의 섹터를 "IT 서비스"로 검색한 결과 데이터를 추출
-    - 요청 주소: https://kh-lab.rockua.ai.kr/stocks?sector=S08
-      (섹터 select 옵션을 확인해보면 IT서비스의 value가 "S08" 이다)
+    - 요청 주소: ??
     TODO: 오늘 (09/15) 18시까지 이메일로 제출 (정적 페이지)
 """
 import re
@@ -35,13 +34,11 @@ rows = soup.select("tr.stock-row")
 print(f"IT서비스 섹터 종목 개수: {len(rows)}")
 print("=" * 95)
 
-
 def get_text(node, selector, default=""):
     # select_one(selector): 조건에 맞는 첫 번째 태그 1개만 반환한다 (없으면 None)
     tag = node.select_one(selector)
     # get_text(strip=True): 태그 안의 텍스트만 꺼내면서 앞뒤 공백/줄바꿈을 제거한다
     return tag.get_text(strip=True) if tag else default
-
 
 def get_number(node, selector, default=0):
     text = get_text(node, selector)
@@ -49,14 +46,12 @@ def get_number(node, selector, default=0):
     numbers = re.sub(r"[^\d]", "", text)
     return int(numbers) if numbers else default
 
-
 def parse_rate(text, default=None):
     if not text:
         return default
     # re.search(r"-?[\d.]+", text): 부호(-)와 소수점을 포함한 숫자 패턴을 문자열에서 찾아낸다
     m = re.search(r"-?[\d.]+", text)
     return float(m.group()) if m else default
-
 
 stocks = []
 for row in rows:

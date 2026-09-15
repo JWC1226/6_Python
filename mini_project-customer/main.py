@@ -1,16 +1,12 @@
 """
-main.py
--------
-고객 관리 시스템(CRM)의 실행 진입점입니다.
-while 루프 기반의 대화형 콘솔 메뉴를 제공하며, 실제 로직은 CRMManager에 위임합니다.
+    고객 관리 시스템(CRM)의 실행 진입점으로, while 루프 기반 대화형 콘솔 메뉴를 제공합니다
+    실제 로직은 CRMManager에 위임합니다
 """
-
 from models import NormalCustomer, VIPCustomer, DuplicateContactError, CustomerNotFoundError
 from crm_manager import CRMManager
 
-
 def print_menu():
-    """메인 메뉴를 출력합니다."""
+    # 메인 메뉴를 출력합니다.
     print("\n===== 고객 관리 시스템 (CRM) =====")
     print("1. 고객 등록")
     print("2. 전체 고객 조회")
@@ -23,19 +19,17 @@ def print_menu():
     print("9. 종료")
     print("===================================")
 
-
 def print_customer_list(customers):
-    """고객 리스트를 보기 좋게 출력하는 공통 함수입니다."""
+    # 고객 리스트를 보기 좋게 출력하는 공통 함수
     if not customers:
-        print("- 표시할 고객이 없습니다.")
+        print("- 표시할 고객이 없습니다")
         return
     for customer in customers:
-        print(f"- {customer}")  # Customer.__str__()이 자동으로 호출됩니다.
-
+        print(f"- {customer}")  # Customer.__str__()이 자동으로 호출된다
 
 def handle_register(manager):
-    """1. 고객 등록 처리"""
-    print("\n[고객 등록] 등록할 고객 유형을 선택하세요.")
+    # 1. 고객 등록 처리
+    print("\n[고객 등록] 등록할 고객 유형을 선택하세요")
     print("1) 일반 고객   2) VIP 고객")
     grade = input("선택: ").strip()
 
@@ -50,7 +44,7 @@ def handle_register(manager):
             manager_name = manager_name if manager_name else None
             new_customer = VIPCustomer(customer_id=None, name=name, contact=contact, manager_name=manager_name)
         else:
-            print("잘못된 선택입니다. 등록을 취소합니다.")
+            print("잘못된 선택입니다, 등록을 취소합니다")
             return
 
         registered = manager.register_customer(new_customer)
@@ -61,23 +55,23 @@ def handle_register(manager):
 
 
 def handle_view_all(manager):
-    """2. 전체 고객 조회 처리"""
+    # 2. 전체 고객 조회 처리
     print("\n[전체 고객 목록]")
     print_customer_list(manager.get_all_customers())
 
 
 def handle_view_vip(manager):
-    """3. VIP 고객 조회 처리"""
+    # 3. VIP 고객 조회 처리
     print("\n[VIP 고객 목록]")
     print_customer_list(manager.get_vip_customers())
 
 
 def handle_search_by_points(manager):
-    """4. 특정 포인트 이상 고객 검색 처리"""
+    # 4. 특정 포인트 이상 고객 검색 처리
     try:
         min_points = int(input("검색 기준 포인트(이상): ").strip())
     except ValueError:
-        print("[오류] 숫자를 입력해야 합니다.")
+        print("[오류] 숫자를 입력해야 합니다")
         return
 
     try:
@@ -91,11 +85,11 @@ def handle_search_by_points(manager):
 
 
 def handle_view_detail(manager):
-    """5. 고객 상세 조회(ID) 처리"""
+    # 5. 고객 상세 조회(ID) 처리
     try:
         customer_id = int(input("조회할 고객 ID: ").strip())
     except ValueError:
-        print("[오류] ID는 숫자로 입력해야 합니다.")
+        print("[오류] ID는 숫자로 입력해야 합니다")
         return
 
     try:
@@ -104,9 +98,8 @@ def handle_view_detail(manager):
     except CustomerNotFoundError as e:
         print(f"[오류] {e}")
 
-
 def handle_update_info(manager):
-    """6. 고객 정보 수정 처리 (이름 / 연락처 / 등급 전환 / VIP 매니저)"""
+    # 6. 고객 정보 수정 처리 (이름 / 연락처 / 등급 전환 / VIP 매니저)
     print("\n[고객 정보 수정] 수정할 항목을 선택하세요.")
     print("1) 이름 수정   2) 연락처 수정   3) 등급 전환(일반<->VIP)   4) VIP 담당 매니저 변경")
     sub_choice = input("선택: ").strip()
@@ -114,7 +107,7 @@ def handle_update_info(manager):
     try:
         customer_id = int(input("대상 고객 ID: ").strip())
     except ValueError:
-        print("[오류] ID는 숫자로 입력해야 합니다.")
+        print("[오류] ID는 숫자로 입력해야 합니다")
         return
 
     try:
@@ -138,7 +131,7 @@ def handle_update_info(manager):
             elif grade_choice == "1":
                 updated = manager.change_grade(customer_id, "normal")
             else:
-                print("잘못된 선택입니다. 등급 전환을 취소합니다.")
+                print("잘못된 선택입니다, 등급 전환을 취소합니다")
                 return
             print(f"등급 전환 완료: {updated}")
 
@@ -148,34 +141,32 @@ def handle_update_info(manager):
             print(f"수정 완료: {updated}")
 
         else:
-            print("잘못된 선택입니다.")
+            print("잘못된 선택입니다")
 
     except (CustomerNotFoundError, DuplicateContactError, ValueError) as e:
         print(f"[오류] {e}")
 
-
 def handle_purchase(manager):
-    """7. 상품 구매 처리"""
+    # 7. 상품 구매 처리
     try:
         customer_id = int(input("구매 고객 ID: ").strip())
         amount = int(input("구매 금액: ").strip())
     except ValueError:
-        print("[오류] ID와 구매 금액은 숫자로 입력해야 합니다.")
+        print("[오류] ID와 구매 금액은 숫자로 입력해야 합니다")
         return
 
     try:
         earned = manager.purchase(customer_id, amount)
-        print(f"구매 완료! {earned}점이 적립되었습니다.")
+        print(f"구매 완료! {earned}점이 적립되었습니다")
     except (CustomerNotFoundError, ValueError) as e:
         print(f"[오류] {e}")
 
-
 def handle_withdraw(manager):
-    """8. 고객 탈퇴 처리"""
+    # 8. 고객 탈퇴 처리
     try:
         customer_id = int(input("탈퇴할 고객 ID: ").strip())
     except ValueError:
-        print("[오류] ID는 숫자로 입력해야 합니다.")
+        print("[오류] ID는 숫자로 입력해야 합니다")
         return
 
     try:
@@ -184,9 +175,8 @@ def handle_withdraw(manager):
     except CustomerNotFoundError as e:
         print(f"[오류] {e}")
 
-
 def main():
-    """프로그램 진입점: while 루프로 메뉴를 반복 실행합니다."""
+    # 프로그램 진입점: while 루프로 메뉴를 반복
     manager = CRMManager()
 
     while True:
@@ -210,11 +200,10 @@ def main():
         elif choice == "8":
             handle_withdraw(manager)
         elif choice == "9":
-            print("프로그램을 종료합니다.")
+            print("프로그램을 종료합니다")
             break
         else:
-            print("[오류] 1~9 사이의 번호를 입력해주세요.")
-
+            print("[오류] 1~9 사이의 번호를 입력해주세요")
 
 if __name__ == "__main__":
     main()
