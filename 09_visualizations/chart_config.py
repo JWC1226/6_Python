@@ -9,7 +9,7 @@ from matplotlib import font_manager
 # 한글 폰트
 # 운영체제 (OS) 별로 기본 한글 폰트／(기본적으로 설치되어 있는 항목들)
 _DEFAULT_FONT = {
-    "windows": ["Malgun Gothic"],
+    "Windows": ["Malgun Gothic"],
     "Darwin": ["AppleGothic"],     # platform.system() 의 결과가 macOS를 부르는 명칭
 }
 # 그 외의 폰트들 (리눅스, 도커 등등)
