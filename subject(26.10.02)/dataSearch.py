@@ -11,8 +11,10 @@ print(df.head())
         # 결측치가 존재하는 열과 결측 개수
         # dtype이 예상과 다르거나 주의가 필요한 열
 df.info()
-    # 결측치 존재 열: Age 177개, Cabin 687개, Embarked 2개
-    # dtype 주의 열: Name/Sex/Ticket/Cabin/Embarked는 str형, Pclass는 int형이지만 실제로는 범주형(등급)으로 다뤄야 함
+    # [기술 1] 결측치가 존재하는 열과 개수: Age(177개), Cabin(687개), Embarked(2개)
+    # [기술 2] dtype 주의가 필요한 열
+        # - Name, Sex, Ticket, Cabin, Embarked: str형(문자열)이므로 분석/모델링 전 인코딩이 필요함
+        # - Pclass: int64이지만 실제로는 좌석 등급을 나타내는 범주형(순서형) 변수이므로 숫자 크기로 해석하면 안 됨
 
 # TODO 4. Age(나이), Fare(요금) 열의 평균값, 최소값, 최대값을 구하시오
 print("Age - 평균:", df['Age'].mean(), "최소:", df['Age'].min(), "최대:", df['Age'].max())
@@ -60,7 +62,6 @@ def get_age_group(age):
         return '50대'
     else:
         return '60대 이상'
-
 df['AgeGroup'] = df['Age'].apply(get_age_group)
 print(df.head())
 
@@ -115,10 +116,9 @@ print(title_stats)
     # 결과를 화면에 출력하지 않고, **이미지 파일로 저장**하시오 (savefig 사용)
 import matplotlib.pyplot as plt
 
-# 한글 라벨이 깨지지 않도록 폰트를 지정
 plt.rcParams['font.family'] = 'Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] = False
-
+    # 한글 라벨이 깨지지 않도록 폰트를 지정
 fig, ax = plt.subplots()
 ax.hist(df[df['Survived'] == 1]['Age'].dropna(), bins=20, alpha=0.5, label='생존')
 ax.hist(df[df['Survived'] == 0]['Age'].dropna(), bins=20, alpha=0.5, label='사망')
@@ -141,7 +141,6 @@ df['Age'] = df['Age'].fillna(df.groupby(['Title', 'Pclass'])['Age'].transform('m
 import seaborn as sns
 
 corr_matrix = df[['Survived', 'Pclass', 'Age', 'SibSp', 'Parch', 'Fare']].corr()
-
 fig2, ax2 = plt.subplots()
 sns.heatmap(corr_matrix, annot=True, cmap='coolwarm', center=0, ax=ax2)
 fig2.savefig('correlation_heatmap.png')
