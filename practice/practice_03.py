@@ -28,6 +28,7 @@ print("=" * 95)
 
 # BeautifulSoup(html, 'lxml'): 문자열 형태의 html을 태그 트리 구조로 변환(파싱)해서 soup 객체로 만든다
 soup = BeautifulSoup(html, "lxml")
+# [TIP] 같은 파서 함수(get_text, get_number 등)는 06_crawling/parsers.py 에 이미 있으므로 import 해서 재사용하면 중복 코드를 줄일 수 있다
 
 # select("tr.stock-row"): CSS 선택자와 일치하는 모든 태그를 리스트로 반환한다 (없으면 빈 리스트)
 rows = soup.select("tr.stock-row")

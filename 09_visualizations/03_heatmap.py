@@ -25,6 +25,7 @@ pivot = pivot[order]    # 열 순서를 정렬했으므로、데이터는 그대
 # corr() : 열끼리 상관 계수 행렬 > (120, 120)
     # -1(정반대) ~0(무관) ~1(동일하게 움직인다) / 대각선은 자기 자신과 비교하기 때문에 항상 1
 corr = pivot.corr()
+# [TIP] 상관 행렬은 대각선 기준으로 대칭이라 mask=np.triu(np.ones_like(corr, dtype=bool)) 로 위쪽 절반을 가리면 더 깔끔하다 (파일 하단 참고)
 print(f"pivot : {pivot.shape} (행=날짜, 열=종목)")
 print(f"corr : {corr.shape} (종목*종목 상관계수)")
 
@@ -38,11 +39,11 @@ sns.heatmap(corr, cmap="coolwarm", center=0, vmin=-1, vmax=1, xticklabels=False,
 ax.set_title("종목 간 수익률 상관(섹터순 정렬)")
 fig.savefig(out("08_heatmap.png"), dpi=120)
 plt.close(fig)
-fig, axes = plt.subplot(1, 2, figsize=(13,5))
+fig, axes = plt.subplots(1, 2, figsize=(13,5))
 sns.heatmap(corr, cmap="coolwarm", xticklabels=False, yticklabels=False, ax=axes[0])
 axes[0].set_title("center 미지정")
 
-sns.heatmap(corr, cmap="coolwarm", center=0, vmin=-1, vmax=1, xticklabels=False, yticklabels=False, ax=axes[0])
+sns.heatmap(corr, cmap="coolwarm", center=0, vmin=-1, vmax=1, xticklabels=False, yticklabels=False, ax=axes[1])
 axes[1].set_title("center=0, vmin/vmax")
 fig.tight_layout()
 fig.savefig(out("09_center.png"), dpi=120)
@@ -69,3 +70,17 @@ print(f"다른 섹터 쌍: {len(diff)}개, 평균: {np.mean(diff):.4f}")
     시장 전체가 함께 움직이는 요인이 크다보니、
         섹터 차이가 심하게 발생하지는 않기 때문에 바로 식별할 정도가 되지는 않는다 !
 """
+
+
+# ======================================================================
+# [실무 TIP] 섹터 평균 상관 히트맵 + 위쪽 삼각형 가리기(mask) + 숫자 표시(annot)
+# mask 에서 True 인 칸은 그려지지 않고, annot=True + fmt 로 각 칸에 값을 표시할 수 있다
+# ======================================================================
+sector_ret = df.pivot_table(index="date", columns="sector", values="ret")    # 날짜 x 섹터 평균 수익률
+sector_corr = sector_ret.corr()
+mask = np.triu(np.ones_like(sector_corr, dtype=bool))
+fig, ax = plt.subplots(figsize=(8, 6.5))
+sns.heatmap(sector_corr, mask=mask, annot=True, fmt=".2f", cmap="coolwarm", center=0, ax=ax)
+ax.set_title("섹터 간 평균 수익률 상관")
+fig.savefig(out("tip_03_sector_corr.png"), dpi=120)
+plt.close(fig)

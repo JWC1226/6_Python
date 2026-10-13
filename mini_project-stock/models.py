@@ -64,6 +64,7 @@ class FreshProduct(Product):
         super().__init__(code, name, price, stock)
         self.expiration_date = expiration_date
 
+    # [TIP] date.today() 를 메소드 안에서 직접 호출하면 테스트하기 어렵다 → get_price(self, today=None) 처럼 기준일을 매개변수로 받으면 날짜를 바꿔가며 테스트할 수 있다
     def get_price(self) -> int:
         # 유통기한까지 남은 일수가 DISCOUNT_THRESHOLD_DAYS 이하(경과 포함)면 50% 할인가, 아니면 정상가를 반환
         days_left = (self.expiration_date - date.today()).days

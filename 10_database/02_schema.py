@@ -10,8 +10,8 @@ def drop_table(cur, name):
     try:
         cur.execute(f"DROP TABLE {name}")
     except Exception as e:
-        if "ORA-00942" not in str(e):
-            pass
+        if "ORA-00942" not in str(e):   # ORA-00942(테이블 없음)만 무시하고, 그 외 오류는 다시 발생시킨다
+            raise
 # ======================================================================
 # 원본 데이터 저장 > 원본 테이블
     # 대리키(데이터가 아닌 별도의 key를 추가)
@@ -85,6 +85,7 @@ with conn.cursor() as cur:
         원본 테이블을 데이터를 그대로 저장하는 것이 목적이고、결측 or 이상치 등은 정제 단계에서 판단해야 한다
     """
 # ======================================================================
+# [TIP] Oracle 은 따옴표 없는 이름을 대문자로 저장한다(changeRate → CHANGERATE) / "changeRate" 처럼 감싸면 대소문자를 구분하므로 DDL과 DML의 표기를 통일해야 한다
 CLEAN_DOL = """CREATE TABLE daily_price(
                                         id          NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
                                         code        VARCHAR2(20)    NOT NULL,
@@ -95,13 +96,13 @@ CLEAN_DOL = """CREATE TABLE daily_price(
                                         close       NUMBER(20),
                                         volume      NUMBER(20),
                                         "change"    NUMBER(20),
-                                        changeRate  NUMBER(6, 2),
+                                        "changeRate" NUMBER(6, 2),  -- 03_bulk, 04_upsert, 11_pipeline 에서 "changeRate"(대소문자 구분)로 사용
                                         -- 수집 시간이나 출처 등 따로 필요한 정보는 자유롭게 추가
                                         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                                         CONSTRAINT uk_code_date UNIQUE (code, "date")
                                         )"""
 with conn.cursor() as cur:
-    drop_table(cur, "dily_price")
+    drop_table(cur, "daily_price")
     cur.execute(CLEAN_DOL)
 print("daily_price 테이블 생성 완료")
 """

@@ -24,7 +24,7 @@ for col in NUM_COLS:
 df['date'] = pd.to_datetime(df['date'], format='mixed')
 
 # 중복 제거
-df = df.drop_duplicated(subset=['code', 'date'], keep='first').reset_index(drop=True)
+df = df.drop_duplicates(subset=['code', 'date'], keep='first').reset_index(drop=True)
 print(len(df))
 
 step1_path = step_path('_step1.pkl')
@@ -34,6 +34,7 @@ step1_path = step_path('_step1.pkl')
         # read_pickle(경로) > 파일에 저장된 데이터를 데이터프레임으로 반환해 줄 것이다
 print("파일로 저장")
 df.to_pickle(step1_path)
+# [TIP] pickle 은 dtype(날짜 타입 등)까지 그대로 저장해서 중간 결과 저장에 편리하지만, 출처를 모르는 pkl 파일은 열면 안 된다 (임의 코드 실행 위험)
 print("저장 완료")
 print("-" * 40) # --------------------------------------------------
 
@@ -67,8 +68,8 @@ print("-" * 40) # --------------------------------------------------
 
 q1, q3 = df['close'].quantile([0.25, 0.75])
 print(f"q1: {q1}, q3: {q3}")
-    # q1 > 상위 25% 1사분위 값 (12061.0)
-    # q3 > 하위 25% 3사분위 값 (55106.25)
+    # q1 > 하위 25% 지점, 1사분위 값 (12061.0)
+    # q3 > 상위 25% 지점, 3사분위 값 (55106.25)
 iqr = q3 - q1
 lo = q1 - 1.5 * iqr
 hi = q3 + 1.5 * iqr
@@ -97,7 +98,7 @@ def is_outlier(data):
 
 # 종목별로 이상치 확인 (IQR 기준)
 result = df.groupby('code')['close'].transform(is_outlier)
-print(f"종목별: {result/sum()}건")
+print(f"종목별: {result.sum()}건")
 
 # 종가 > 고가 ? 종가 < 저가 ?
 result2 = (df["close"] > df["high"]) | (df['close'] < df['low'])
@@ -117,5 +118,16 @@ print(f"이상치 (mask): {mask.sum()}")
 print(f"거래량 음수 (result3): {result3.sum()}")
 print(f"증가 결측수: {df['close'].isna().sum()}")
 
-print("_step2.pk1 저장")
-df.to_pickle(step_path('_step2.pk1'))
+print("_step2.pkl 저장")
+df.to_pickle(step_path('_step2.pkl'))   # 07_missing.py 에서 '_step2.pkl' 로 읽는다
+
+
+# ======================================================================
+# [실무 TIP] 이상치를 지우지 않고 경계값으로 자르기 - clip (윈저라이징)
+# 종목별 1% / 99% 분위수를 경계로 잘라내면 극단값의 영향은 줄이면서 행은 그대로 유지할 수 있다
+# ======================================================================
+lower = df.groupby("code")["close"].transform(lambda s: s.quantile(0.01))
+upper = df.groupby("code")["close"].transform(lambda s: s.quantile(0.99))
+clipped = df["close"].clip(lower=lower, upper=upper)
+changed = df["close"].notna() & (clipped != df["close"])
+print(f"clip 으로 값이 조정된 행: {changed.sum()}건")

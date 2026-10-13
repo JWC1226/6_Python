@@ -24,6 +24,7 @@ def from_api(logger, max_pages=MAX_PAGES):
             failed: 응답 받지 못한 페이지 번호 목록
     """
     rows, failed = [], []
+    # [TIP] requests.adapters.HTTPAdapter(max_retries=...) 를 Session 에 연결(s.mount)하면 일시적인 네트워크 오류 시 자동으로 재시도하게 만들 수 있다
     with requests.Session() as s:
         s.headers.update(HEADERS)
         for page in range(1, max_pages+1):

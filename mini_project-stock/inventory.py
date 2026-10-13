@@ -45,6 +45,7 @@ class InventoryManager:
         # 전체 재고의 총 금액(get_price() * stock의 합)을 계산
         # 상품 종류를 구분하지 않고 각 객체의 get_price()를 그대로 사용(다형성)
         total = 0
+        # [TIP] sum(p.get_price() * p.stock for p in self.products) 처럼 제너레이터 표현식으로 한 줄에 계산할 수도 있다
         for product in self.products:
             total += product.get_price() * product.stock
         return total

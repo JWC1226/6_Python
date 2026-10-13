@@ -46,7 +46,25 @@ print(f"x: {x}, rest: {rest}")      # 나머지 데이터는 리스트 형태로
     （） | []
     딕셔너리 키 O | 딕셔너리 키 X
 """
+# [TIP] 좌표처럼 바뀌면 안 되는 묶음 데이터는 튜플로 표현하며, 불변이라서 딕셔너리의 key 나 set 의 원소로 사용할 수 있다
 locations = {
     (35.5451, 126.9750): "서울역", 
     (30.5401, 124.9050): "부산역"
 }
+
+
+# ======================================================================
+# [실무 TIP] NamedTuple - 이름으로 접근하는 튜플
+# 인덱스(t[0]) 대신 이름(t.lat)으로 접근할 수 있어 읽기 쉽고, 튜플처럼 불변·언패킹도 그대로 가능하다
+# ======================================================================
+from typing import NamedTuple
+
+class Station(NamedTuple):
+    name: str
+    lat: float
+    lng: float
+
+seoul = Station("서울역", 37.5547, 126.9706)
+print(f"{seoul.name}: ({seoul.lat}, {seoul.lng})")
+name, lat, lng = seoul                  # 일반 튜플처럼 언패킹
+print(seoul)

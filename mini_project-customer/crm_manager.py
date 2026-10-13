@@ -25,6 +25,7 @@ class CRMManager:
                 return True
         return False
 
+    # [TIP] 고객 수가 많아지면 리스트 순회 대신 {customer_id: customer} 딕셔너리로 관리하면 ID 조회가 O(1)로 빨라진다
     def _find_by_id(self, customer_id):
         # ID로 고객을 찾아 반환한다
             # 없으면 CustomerNotFoundError를 발생

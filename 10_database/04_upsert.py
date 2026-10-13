@@ -1,5 +1,5 @@
 """
-    먹등성과 upsert
+    멱등성과 upsert
 """
 import time
 import pandas as pd
@@ -37,7 +37,7 @@ def make_table(name, unique=False):
         cur.execute(f"""
             CREATE TABLE {name} (
                 id          NUMBER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-                code        VARCHAR2(20),   NOT NULL,
+                code        VARCHAR2(20)    NOT NULL,
                 "date"      DATE            NOT NULL,
                 high        NUMBER(20),
                 low         NUMBER(20),
@@ -45,8 +45,7 @@ def make_table(name, unique=False):
                 open        NUMBER(20),
                 volume      NUMBER(20),
                 "change"    NUMBER(20),
-                changeRate  NUMBER(20),
-                {uk}
+                "changeRate" NUMBER(6, 2){uk}
             )""")
 
 def count(name):
@@ -65,6 +64,7 @@ def count(name):
     추가／갱신을 동시에 진행하기 위해 UPSERT를 적용한다 (사용)
 """
 
+# [TIP] 같은 작업을 여러 번 실행해도 결과가 같은 성질을 '멱등성'이라고 하며, 재실행이 잦은 배치·파이프라인에서 UPSERT 를 기본으로 쓰는 이유이다
 PLAIN = f"INSERT INTO {{t}} ({COL_SQL}) VALUES ({PH})"
 # {t} = 이후에 .format(t="테이블명") 를 적용할 예정이다
 
@@ -75,7 +75,7 @@ UPSERT = f"""
     ON (dst.code = src.code AND dst."date" = src."date")
     WHEN MATCHED THEN
         UPDATE SET dst.open = src.open, dst.high = src.high, dst.low = src.low, dst.close = src.close,
-                   dst.volume = src.volume, dst."change" = src."change, dst."changeRate" = src."changeRate"
+                   dst.volume = src.volume, dst."change" = src."change", dst."changeRate" = src."changeRate"
     WHEN NOT MATCHED THEN
         INSERT ({COL_SQL})
         VALUES (src.code, src."date", src.open, src.high, src.low, src.close, src.volume, src."change", src."changeRate")
@@ -196,6 +196,7 @@ checks = [
 all_ok = True
 for name, exp, act in checks:
     ok = str(exp) == str(act)
+    all_ok = all_ok and ok
     print(f" {name:<14}{str(exp):>20}{str(act):>20} {'O' if ok else 'X'}")
 print(f"모든 항목 일치: {all_ok}")
 
@@ -206,7 +207,7 @@ def drop_table(cur, name):
         cur.execute(f"DROP TABLE {name}")
     except Exception as e:
         if "ORA-00942" not in str(e):
-            pass
+            raise
 with conn.cursor() as cur:
     for t in ["t_noconstraint", "t_unique", "t_upsert", "t_stats"]:
         drop_table(cur, t)

@@ -11,6 +11,7 @@ def load_merged():
     prices = load_prices()
     companies = load_companies()
     sectors = load_sectors().rename(columns={"code":"sectorCode", "name":"sector"})
+    # [TIP] rename 으로 열 이름을 미리 맞춰두면 merge 할 때 같은 이름의 열이 _x, _y 로 갈라지는 것을 막을 수 있다
 
     df = (
         prices.merge(companies[['code', 'name', 'sectorCode', 'market']],

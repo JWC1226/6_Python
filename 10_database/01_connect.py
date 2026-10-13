@@ -68,6 +68,7 @@ conn.commit()
 with conn.cursor() as cur:
     cur.execute("SELECT * FROM demo_param WHERE price > :1", (2000,))
     print(f"결과: {len(cur.fetchall())}행")
+    # [TIP] 값을 f-string 으로 SQL 에 직접 넣으면 SQL 인젝션 위험이 있다 → 항상 :1, :name 같은 바인드 변수로 전달한다
 """
     파라미터를 한 개만 넘기더라도 tuple로 전달하는 것을 권장한다
     변수가 여러 개인 경우、문자열을 하나만 전달하게 되면 자동으로 쪼개서 사용한다
@@ -95,13 +96,23 @@ engine = get_engine()
 
 df = pd.read_sql("SELECT * FROM demo_param ORDER BY price DESC", engine)
 print(df)
-print(df.info())
+df.info()           # info()는 직접 출력하고 None을 반환하므로 print로 감싸지 않는다
 # 가능하다면 DB에서 정렬 후 데이터를 가져오는게 좀 더 빠르다
 
 with conn.cursor() as cur:
     for t in ["demo_commit", "demo_param"]:
-        cur.execute("BEGIN EXECUTE IMMEDIATE 'DROP TABLE {t}'; "
+        cur.execute(f"BEGIN EXECUTE IMMEDIATE 'DROP TABLE {t}'; "
                     "EXCEPTION WHEN OTHERS THEN IF SQLCODE != -942 THEN RAISE; "
                     "END IF; END;")
 conn.close()
 print("테이블 정리 완료")
+
+
+# ======================================================================
+# [실무 TIP] with 문으로 커넥션 자동 반납 + 이름 기반 바인드 변수(:name)
+# with 블록을 벗어나면 커넥션이 자동으로 close 되고, 바인드 변수는 딕셔너리로 이름을 지정해서 전달할 수 있다
+# ======================================================================
+with connect() as tip_conn:
+    with tip_conn.cursor() as cur:
+        cur.execute("SELECT :a + :b AS total FROM dual", {"a": 10, "b": 20})
+        print(f"바인드 변수 결과: {cur.fetchone()[0]}")

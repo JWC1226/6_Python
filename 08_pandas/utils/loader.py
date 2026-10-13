@@ -23,7 +23,8 @@ def load_csv(dedup=True):
 
 def load_prices():
     """prices.csv 파일 읽어서 DF 반환"""
-    return pd.read_csv(path('prices.csv'), encoding=ENCODING)
+    # [TIP] parse_dates 로 날짜 타입을 지정해야 .dt 접근자와 resample 같은 날짜 기능을 사용할 수 있다 (09, 10번 파일에서 사용)
+    return pd.read_csv(path('prices.csv'), encoding=ENCODING, parse_dates=['date'])
 
 def load_companies(raw=False):
     """

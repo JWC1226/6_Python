@@ -56,6 +56,7 @@ print("-" * 80) # --------------------------------------------------
 
 # TODO: 'close'가 50000을 초과하고、'changeRate'가 0을 초과하는 데이터
 both = last_history[ (last_history['close'] > 50_000) & (last_history['changeRate'] > 0) ]
+# [TIP] 조건이 길어지면 df.query("close > 50000 and changeRate > 0") 처럼 문자열로 작성할 수도 있다 (파일 하단 참고)
 print(f"결과 {len(both)}건")
 print(both[['code', 'close', 'changeRate']].head(3))
 """
@@ -118,3 +119,12 @@ print(indexed.head(3))
 
 # TODO: 'G0001' 종목의 'close', 'changeRate' 만 조회
 print(indexed.loc['G0001', ['close', 'changeRate']])
+
+
+# ======================================================================
+# [실무 TIP] query() / nlargest()
+# query 는 SQL 의 WHERE 처럼 조건을 문자열로 작성하고 파이썬 변수는 @변수명 으로 사용한다 / nlargest 는 정렬 + head 를 한 번에 해준다
+# ======================================================================
+min_close = 50_000
+print(df.query("close > @min_close and changeRate > 0")[["code", "close", "changeRate"]].head(3))
+print(df.nlargest(3, "volume")[["code", "volume"]])

@@ -152,6 +152,7 @@ def delete_product_flow(manager: InventoryManager) -> None:
 def main() -> None:
     # 프로그램 진입점・InventoryManager를 생성하고 메뉴 루프를 돌며 사용자 입력에 따라 기능을 호출합니다
     manager = InventoryManager()
+    # [TIP] 아래처럼 메뉴 번호와 함수를 딕셔너리로 연결하는 방식(디스패치 테이블)은 if-elif 가 길어지는 것을 막아주는 실무 패턴이다
     menu_actions = {
         "1": add_product_flow,
         "2": list_all_flow,

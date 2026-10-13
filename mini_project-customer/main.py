@@ -178,6 +178,7 @@ def handle_withdraw(manager):
 def main():
     # 프로그램 진입점: while 루프로 메뉴를 반복
     manager = CRMManager()
+    # [TIP] while 루프를 try/except KeyboardInterrupt 로 감싸면 Ctrl+C 를 눌러도 오류 대신 종료 메시지를 보여줄 수 있다 (README To-Do 4번)
 
     while True:
         print_menu()

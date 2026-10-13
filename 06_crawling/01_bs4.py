@@ -13,6 +13,7 @@ from bs4 import BeautifulSoup
 from config import BASE, TIMEOUT, HEADERS
 resp = requests.get(f"{BASE}/stocks", headers=HEADERS, timeout=TIMEOUT)
 resp.raise_for_status()    # 200 이 아니면 예외를 발생
+# [TIP] 같은 사이트에 여러 번 요청할 때는 requests.Session() 을 사용하면 연결을 재사용해서 빠르다 (11_pipeline/extract.py 참고)
 html = resp.text
 print(f"{BASE}/stocks    [{resp.status_code}] {len(html):,}자")
 print("=" * 55)
@@ -48,3 +49,13 @@ for sel in ["td.col-code", "td.col-name a", "td.col-sector", "td.col-price", "td
     tag = first.select_one(sel)
     value = tag.get_text(strip=True) if tag else "없음"
     print(f"{sel:<20} {value}")
+
+
+# ======================================================================
+# [실무 TIP] 선택자 + 컴프리헨션으로 여러 값을 한 번에 추출
+# select() 결과는 리스트이므로 컴프리헨션과 함께 쓰면 '모든 종목명', '모든 링크'를 한 줄로 뽑을 수 있다
+# ======================================================================
+names = [a.get_text(strip=True) for a in soup.select("tr.stock-row td.col-name a")]
+links = [a.get("href") for a in soup.select("tr.stock-row td.col-name a")]
+print(f"종목명 {len(names)}개: {names[:5]}")
+print(f"링크 예시: {links[:2]}")

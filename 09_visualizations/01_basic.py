@@ -23,6 +23,7 @@ fig, ax = plt.subplots(figsize=(12, 4))
 
 # ax.plot(x, y)
 ax.plot(one['date'], one['close'])
+# [TIP] plt.plot() 처럼 pyplot 함수로 그리기보다 fig, ax 를 받아서 ax.메소드() 로 그리는 '객체 지향 방식'이 여러 차트를 다룰 때 헷갈리지 않는다
 ax.set_title("가온전자 주가 추이")
 ax.set_xlabel("날짜")
 ax.set_ylabel("종가(원)")
@@ -66,4 +67,22 @@ for ax, code in zip(axes.flat, codes):
 fig.suptitle("종목별 주가 추이")
 fig.tight_layout()      # 제목, 라벨이 서로 겹치지 않게 자동으로 여백 계산
 fig.savefig(out("03_subplots.png"), dpi=120)
+plt.close(fig)
+
+
+# ======================================================================
+# [실무 TIP] 이동 평균선 겹쳐 그리기 + 날짜 축 서식(matplotlib.dates)
+# 같은 ax 에 plot 을 여러 번 호출하면 선이 겹쳐지고, label 을 지정한 뒤 legend() 로 범례를 표시한다
+# ======================================================================
+import matplotlib.dates as mdates
+
+fig, ax = plt.subplots(figsize=(12, 4))
+ax.plot(one["date"], one["close"], lw=1, label="종가")
+ax.plot(one["date"], one["close"].rolling(20).mean(), lw=1.5, label="20일 이동평균")
+ax.fill_between(one["date"], one["low"], one["high"], alpha=0.2, label="저가~고가")
+ax.xaxis.set_major_formatter(mdates.DateFormatter("%y.%m"))     # 날짜 표시 형식 (예: 26.03)
+ax.set_title("가온전자 종가와 20일 이동평균")
+ax.legend()
+ax.grid(alpha=0.3)
+fig.savefig(out("tip_01_moving_average.png"))
 plt.close(fig)

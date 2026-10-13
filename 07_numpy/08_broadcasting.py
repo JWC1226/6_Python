@@ -27,7 +27,7 @@ cases = [
 ]
 for a_shape, b_shape, label in cases:
     arr_a = np.ones(a_shape)
-    arr_b = 2.0 if np.ones is None else np.ones(b_shape)
+    arr_b = 2.0 if b_shape is None else np.ones(b_shape)
     try:
         result = (arr_a + arr_b).shape
     except ValueError:
@@ -45,6 +45,17 @@ matrix = load_matrix()
 means_w = matrix.mean(axis=1)                   # (120,)
 # print(f"{matrix - means_w}")                  # 브로드캐스팅 오류 발생 !
 means = matrix.mean(axis=1, keepdims=True)      # (120, 1)
+# [TIP] 브로드캐스팅 오류가 나면 두 배열의 .shape 을 출력해서 '뒤에서부터' 비교해 보는 것이 가장 빠른 해결 방법이다
 print(f"{(matrix - means).shape}")
 print(f"{(matrix - means)}")
 print("-" * 40) # --------------------------------------------------
+
+
+# ======================================================================
+# [실무 TIP] 브로드캐스팅으로 종목별 표준화(z-score)
+# 종목마다 가격대가 달라도 (값 - 평균) / 표준편차 로 바꾸면 같은 기준으로 비교할 수 있다 (12_ml 의 StandardScaler 와 같은 원리)
+# ======================================================================
+std = matrix.std(axis=1, keepdims=True)             # (120, 1)
+z = (matrix - means) / std                          # (120, 750) - (120, 1) / (120, 1)
+print(f"z.shape: {z.shape}")
+print(f"종목별 평균이 0인가? {np.allclose(z.mean(axis=1), 0)} / 표준편차가 1인가? {np.allclose(z.std(axis=1), 1)}")

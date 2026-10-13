@@ -110,6 +110,7 @@ print(f"to_datetime > {df['date'].dtype}")
     na_values: 결측으로 취급할 문자열을 지정
     thousands: 천 단위 구분자를 제거 (천 단위 구분자가 있는 데이터를 숫자로 변환한다)
 """
+# [TIP] 큰 파일은 usecols=[필요한 열], nrows=행수 옵션으로 필요한 만큼만 읽으면 메모리와 시간을 아낄 수 있다 (파일 하단 참고)
 # 데이터를 불러온 후 점검하기
     # df.head(n) : 위에서부터 n개의 데이터를 조회 (생략시 5개)
 print(df.head(3))
@@ -119,3 +120,12 @@ print(df.shape)
 df.info()
     # df.dtypes  : 컬럼별 데이터 타입
 print(df.dtypes)
+
+
+# ======================================================================
+# [실무 TIP] 필요한 열만 읽기 + describe() 로 요약 통계 확인
+# describe() 는 숫자 열의 개수, 평균, 표준편차, 최소/최대, 사분위수를 한 번에 보여준다
+# ======================================================================
+small = pd.read_csv(RAW_PATH, encoding=ENCODING, usecols=["code", "date", "high", "low"], nrows=1000)
+print(f"usecols + nrows: {small.shape}")
+print(small.describe().round(1))

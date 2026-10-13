@@ -28,7 +28,7 @@ print(arr)
 # 최대값의 인덱스 반환 : argmax
 # 최소값의 인덱스 반환 : argmin
 print(f"argmax : {np.argmax(arr)}")
-print(f"argmax : {np.argmin(arr)}")
+print(f"argmin : {np.argmin(arr)}")
 print(arr.flatten())
 # 2 차원 배열을 1 차원으로 변환했을 때, 기준으로 인덱스를 반환해준다 !
 # 축 (axis) 기준으로 조회
@@ -36,6 +36,7 @@ print(arr.flatten())
     # axis=1 : 행을 기준으로 조회
 print(f"열 기준 최대값 인덱스: {np.argmax(arr, axis=0)}")
 print(f"행 기준 최대값 인덱스: {np.argmax(arr, axis=1)}")
+# [TIP] 2차원 배열에서 (행, 열) 위치가 필요하면 np.unravel_index(np.argmax(arr), arr.shape) 를 사용한다 (파일 하단 참고)
 print("-" * 35) # --------------------------------------------------
 
 arr = arr.flatten()
@@ -50,3 +51,16 @@ print(desc_arr)
 print(f"arr: {arr}")
 arr.sort()
 print(f"정렬된 배열: {arr}")
+
+
+# ======================================================================
+# [실무 TIP] 상위 N개 찾기 - argsort / 값의 빈도 - unique
+# argsort 는 '정렬했을 때의 인덱스 순서'를 반환하므로, 뒤에서부터 N개를 자르면 상위 N개의 위치를 얻을 수 있다
+# ======================================================================
+scores = np.array([72, 95, 88, 60, 95, 81])
+top3_idx = np.argsort(scores)[::-1][:3]
+print(f"상위 3개 위치: {top3_idx} / 값: {scores[top3_idx]}")
+values, counts = np.unique(scores, return_counts=True)
+print(f"고유값: {values} / 개수: {counts}")
+m2 = np.array([[10, 23, 5], [34, 16, 42]])
+print(f"최대값의 (행, 열) 위치: {np.unravel_index(np.argmax(m2), m2.shape)}")

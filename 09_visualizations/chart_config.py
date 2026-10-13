@@ -18,6 +18,7 @@ def find_korean_font():
     """설치된 폰트 중 한글을 표시할 수 있는 항목을 찾아 반환"""
     # font_manager.fontManager.ttflist : matplotlib 에서 시스템을 훑어 만들어 둔 설치된 폰트 목록
     installed = {f.name for f in font_manager.fontManager.ttflist}
+    # [TIP] 새 폰트를 설치했는데 목록에 없으면 matplotlib 폰트 캐시(matplotlib.get_cachedir() 폴더의 fontlist-*.json)를 지우고 다시 실행한다
     # > set 구조로 폰트명 목록을 저장
 
     # 리스트 + 리스트 >> 리스트

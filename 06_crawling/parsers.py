@@ -33,6 +33,7 @@ def get_attr(node, selector, attr, default=""):
         return default
     return tag.get(attr, default)
 
+# [TIP] 같은 정규식을 반복해서 사용할 때는 re.compile(패턴) 으로 미리 만들어 두고 재사용하면 편리하다
 # 숫자 추출
 def get_number(node, selector, default=0):
     """

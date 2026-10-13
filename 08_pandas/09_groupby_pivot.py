@@ -117,6 +117,7 @@ pv = d.pivot_table(
     aggfunc="mean"      # 셀 데이터 집계 함수
 )
 print(pv.iloc[:5, :4].round(0))
+# [TIP] 개수만 세는 교차표는 pd.crosstab(df["sector"], df["market"]) 로 더 간단히 만들 수 있다 (파일 하단 참고)
 print("-" * 40) # --------------------------------------------------
 
 # 넓은 형식、긴 형식
@@ -134,3 +135,12 @@ print(long.head(6).round())
 # pivot > 사람이 보는 보고서, Excel, 데이터 등을을 확인 시 활용한다
 back = long.pivot(index="sector", columns="quarter", values="close")
 print(back.round())
+
+
+# ======================================================================
+# [실무 TIP] pd.crosstab - 두 범주의 교차 빈도표
+# margins=True 는 합계 행/열을 추가하고, normalize="index" 는 행 기준 비율로 바꿔준다 (섹터 안에서 시장별 비중)
+# ======================================================================
+companies_only = df.drop_duplicates("code")
+print(pd.crosstab(companies_only["sector"], companies_only["market"], margins=True))
+print((pd.crosstab(companies_only["sector"], companies_only["market"], normalize="index") * 100).round(1).head())

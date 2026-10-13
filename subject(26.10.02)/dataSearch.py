@@ -2,6 +2,7 @@
 import pandas as pd
 
 df = pd.read_csv('train.csv')
+# [TIP] 'train.csv' 는 '실행 위치' 기준 상대 경로라서 다른 폴더에서 실행하면 FileNotFoundError 가 난다 → Path(__file__).with_name('train.csv') 처럼 파일 기준 경로를 쓰면 안전하다
 
 # TODO 2. 저장된 데이터에서 상위 5개의 행을 출력하시오
 print(df.head())

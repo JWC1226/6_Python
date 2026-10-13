@@ -15,7 +15,7 @@ b = np.array([1, 2, 3, 4])
 print(f"a: {a} \nb: {b}")
 print(f"a * 2 = {a * 2}")       # [20 40 60 80]
 print(f"a + b = {a + b}")       # [11 22 33 44]
-print(f"a > b = {a > 25}")      # [False False True True]
+print(f"a > 25 = {a > 25}")     # [False False True True]
 print("-" * 40) # --------------------------------------------------
 
 # 유니버셜 함수 (ufunc): 배열의 모든 요소에 하나씩 적용되는 함수
@@ -48,9 +48,19 @@ print(f"최저가: {prices[min_idx]:,}원 ({dates[min_idx]})")
     prices[:-1] 첫 날부터 끝에서 두 번째까지 (어제)
 """
 result = (prices[1:] - prices[:-1]) / prices[:-1]   # 전일 대비 변화량
+# [TIP] np.diff(prices) / prices[:-1] 또는 prices[1:] / prices[:-1] - 1 로도 같은 수익률을 구할 수 있다
 print(f"일간 수익률 {len(result)}")
 print(f"평균: {result.mean() * 100:.4f}")
 print(f"표준편차: {result.std() * 100:.4f}")
 print(f"최대 상승: {result.max() * 100:.4f} ({dates[result.argmax() + 1]})")
 print(f"최대 하락: {result.min() * 100:.4f} ({dates[result.argmin() + 1]})")
 print("-" * 40) # --------------------------------------------------
+
+
+# ======================================================================
+# [실무 TIP] 누적 수익률 - np.cumprod / 분위수 - np.percentile
+# (1 + 일간 수익률) 을 차례로 곱하면 누적 수익률이 되고, percentile 로 분포의 특정 위치 값을 확인할 수 있다
+# ======================================================================
+cum = np.cumprod(1 + result)
+print(f"누적 수익률: {(cum[-1] - 1) * 100:.2f}% (검산: {(prices[-1] / prices[0] - 1) * 100:.2f}%)")
+print(f"일간 수익률 5% / 50% / 95% 분위: {np.percentile(result * 100, [5, 50, 95]).round(3)}")

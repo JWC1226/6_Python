@@ -36,7 +36,7 @@ MERGE_USING = ",".join(f":{i+1} AS {_quote(c)}" for i, c in enumerate(COLS))
 UPSERT = f"""
 MERGE INTO daily_price dst
 USING (SELECT {MERGE_USING} FROM dual) src
-ON (dst.code = sr.code AND dst."date" = src."date")
+ON (dst.code = src.code AND dst."date" = src."date")
 WHEN MATCHED THEN
     UPDATE SET dst.open = src.open,
                dst.high = src.high,
@@ -95,7 +95,7 @@ def to_db(df, logger, chunk=CHUNK_SIZE):
     updated = len(rows) - inserted
     t = time.perf_counter() - start
     logger.info(f"적재 완료 - 신규: {inserted}건, 갱신: {updated}건 ({t})")
-    return inserted, updated, t, time.perf_counter() - start
+    return inserted, updated, t
 
 def verify(df, logger):
     """
@@ -108,4 +108,5 @@ def verify(df, logger):
         ・날짜 최소값 (≒ 시작일)
         ・날짜 최대값
     """
+    # [TIP] DB 에서 SELECT COUNT(*), SUM(close), MIN("date"), MAX("date") 를 조회해서 df 의 값과 비교하는 방식으로 구현할 수 있다 (10_database/04_upsert.py 의 checks 참고)
     pass

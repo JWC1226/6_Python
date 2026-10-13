@@ -9,6 +9,7 @@ members = ["사용자", "이용자", "관리자"]
 for m in members:
     print(f"{m}님、환영합니다")
 print()
+# [TIP] 반복 중인 리스트에서 요소를 직접 삭제(remove)하면 인덱스가 밀려 건너뛰는 요소가 생긴다 → 컴프리헨션으로 새 리스트를 만드는 방식을 사용하자
 for c in "Happy":
     print(c, end=" ")
 print()
@@ -103,4 +104,18 @@ for m in members:
         break
 else:
     print("찾는 회원이 없습니다")
+print()
+
+
+# ======================================================================
+# [실무 TIP] zip(strict=True) / reversed() / sorted()
+# zip 은 길이가 다르면 짧은 쪽에 맞춰 조용히 잘라버린다 → strict=True 를 주면 길이가 다를 때 오류로 알려준다 (Python 3.10+)
+# ======================================================================
+for name, now in zip(names, today, strict=True):
+    print(f"{name}: {now:,}원")
+for m in reversed(members):             # 원본은 그대로 두고 역순으로 순회
+    print(m, end=" ")
+print()
+for m in sorted(members):               # 원본은 그대로 두고 정렬된 순서로 순회
+    print(m, end=" ")
 print()

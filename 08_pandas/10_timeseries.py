@@ -15,7 +15,7 @@ print(f"one index : {one.index}")
 # 날짜 데이터를 인덱스로 사용한다
     # set_index(인덱스열) : 지정한 열이 인덱스가 되어 새로운 DF 반환
     # one.info()
-one = one.set_index('data').sort_index()
+one = one.set_index('date').sort_index()
 print(f"인덱스 변경 후 one index: {one.index}")
 print(f"기간: {one.index.min().date()} ~ {one.index.max().date()}")
 
@@ -46,7 +46,8 @@ monthly_last = one['close'].resample('ME').last()
 monthly_mean = one['close'].resample('ME').mean()
 monthly_vol = one['volume'].resample('ME').sum()
 
-print(f"{"월":<12} {'월말증가':<16} {'월평균가':<16}")
+print(f"{'월':<12} {'월말종가':<16} {'월평균가':<16}")
+# f-string 안에서 바깥과 같은 따옴표(" ")를 다시 쓰면 Python 3.11 이하에서는 SyntaxError (3.12부터 허용)
 for idx in monthly_last.index[:4]:
     print(f"{idx.strftime('%Y-%m'):<12} {monthly_last[idx]:>16.0f} {monthly_mean[idx]:>16.0f}")
 print(f"월별 거래량: {monthly_vol.iloc[0]:,.0f}")
@@ -66,9 +67,7 @@ edge = df.index[df['code'] != df['code'].shift()][1]
 for i in [edge-1, edge, edge+1]:
     w = f"{wrong[i]:,.0f}" if pd.notna(wrong[i]) else "NaN"
     r = f"{right[i]:,.0f}" if pd.notna(right[i]) else "NaN"
-
-# TODO: 출력부터 시작 ~~
-# print(f" {i:<8} {df.loc[i, 'code']:<9} {df.loc[i,'close']:>10} {w:>20} {r:>20}")
+    print(f" {i:<8} {df.loc[i, 'code']:<9} {df.loc[i,'close']:>10} {w:>20} {r:>20}")
 """
     groupby 없이 계산하면 {wrong} 종목별 코드가 달라도 이평선 재계산없이 이어지는 형태도 계산이 된다
     그룹화를 해줘야 종목별 20일 이평선이 정상적으로 계산된다
@@ -80,7 +79,8 @@ print("-" * 40) # --------------------------------------------------
     # cumprod : 누적 곱셈 계산 함수
         # s.cumprod() > s[0], s[0]*s[1], s[0]*s[1]*s[2], ……
 df['ret'] = df.groupby('code')['close'].transform(lambda s: s.pct_change())
-sample = df[df['code'] == ['G0001'].head(4)]
+# [TIP] groupby 객체에 바로 .pct_change() / .shift() / .diff() 를 사용할 수 있어서 transform(lambda ...) 없이도 종목별로 계산된다
+sample = df[df['code'] == 'G0001'].head(4)
 for _, r in sample.iterrows():
     ret = f"{r['ret']:.4f}" if pd.notna(r['ret']) else 'NaN'
     print(f"{r['date'].date()} {r['close']:,} {ret}")
@@ -89,3 +89,18 @@ for _, r in sample.iterrows():
     # > 첫 날의 NaN을 0으로 채우고、(1+수익률)을 차례로 곱한다
 cum = (1+df[df['code'] == 'G0001']['ret'].fillna(0)).cumprod().iloc[-1]
 print(f"G0001 종목의 누적 수익률: {(cum - 1) * 100:.1f}%")
+
+
+# ======================================================================
+# [실무 TIP] groupby + pct_change / rolling + resample 메소드 체이닝
+# 괄호로 감싸면 여러 줄에 걸쳐 메소드를 이어서 작성할 수 있다 (단계별로 읽기 쉬움)
+# ======================================================================
+df["ret2"] = df.groupby("code")["close"].pct_change()                # transform(lambda s: s.pct_change()) 와 같은 결과
+print(f"두 방식의 결과가 같은가? {df['ret'].equals(df['ret2'])}")
+ma = (
+    df[df["code"] == "G0001"]
+    .set_index("date")["close"]
+    .rolling(20).mean()                                              # 20일 이동 평균
+    .resample("ME").last()                                           # 월말 값만 추출
+)
+print(ma.dropna().head(3).round(0))

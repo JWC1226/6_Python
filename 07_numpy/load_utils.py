@@ -16,6 +16,7 @@ _COLUMNS = {
 }
 
 # 한 번 읽은 열(데이터)을 저장하는 용도
+# [TIP] 같은 인자로 호출한 결과를 저장해두는 캐시는 functools.lru_cache 데코레이터로도 간단히 만들 수 있다
 _cache = {}
 def _read(col, dtype):
     """

@@ -21,3 +21,11 @@ print(f" BASE_URL >> {BASE_URL}")
 # 별칭 부여
 from module_util import clean_price as cp
 print(f"5,000원 >>> {cp(' 5,000원  ')}")
+
+
+# ======================================================================
+# [실무 TIP] __name__ 변수
+# 직접 실행한 파일의 __name__ 은 '__main__', import 된 모듈의 __name__ 은 '모듈명'이 된다
+# module_util.py 하단의 if __name__ == "__main__": 블록은 그 파일을 직접 실행할 때만 동작한다
+# ======================================================================
+print(f"현재 파일: {__name__} / module_util: {module_util.__name__}")

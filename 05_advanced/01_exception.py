@@ -17,6 +17,7 @@ def divide(text):
         print(f"{text}: 0으로 나눌 수 없다!")
     except Exception as e:
         print(f"{text}: {e}")
+        # [TIP] except Exception 은 마지막 안전장치로만 사용하고, 처리할 수 있는 구체적인 예외(ValueError 등)를 먼저 잡는 것이 좋다
     else:       # 예외가 없을 때 실행
         print(f"결과: {result}")
     finally:
@@ -80,3 +81,22 @@ for amount in [5000, 50000, -1000]:
         print(f"[금액 오류] {e}")
     except NoBalanceError as e:
         print(f"[잔액 오류] {e}")
+
+
+# ======================================================================
+# [실무 TIP] raise ... from e - 예외 연결(원인 보존)
+# 하위 예외를 업무용 예외로 바꿔서 던질 때 from e 를 붙이면 원래 예외(원인)가 함께 기록되어 디버깅이 쉬워진다
+# ======================================================================
+class ConfigError(Exception):
+    """설정 값 오류"""
+
+def read_port(text):
+    try:
+        return int(text)
+    except ValueError as e:
+        raise ConfigError(f"포트 번호가 올바르지 않습니다: {text!r}") from e
+
+try:
+    read_port("80a0")
+except ConfigError as e:
+    print(f"{e} / 원인: {type(e.__cause__).__name__}")

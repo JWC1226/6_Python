@@ -21,6 +21,7 @@ print('-' * 60)
 arr = np.array([1, 2, 3, 4])
 print(f"arr: {arr}")
 print(f"배열 타입: {arr.dtype}")
+# [TIP] 서로 다른 타입을 섞어서 배열을 만들면 하나의 타입으로 자동 변환(업캐스팅)된다 → [1, 2.5] 는 float, [1, "2"] 는 문자열 배열
 arr2 = np.array([5, 6, 7, 8])
 print(f"arr2 : {arr2}")
 """
@@ -45,7 +46,7 @@ arr_2d = np.array([[1,2,3], [4,5,6]])
 print(f"2차원 배열: {arr_2d}, 차원: {arr_2d.ndim}, 형태: {arr_2d.shape}")
 print("=" * 60)
 
-n = 100_00 # 숫자 표현 시 _로 구분이 가능하다
+n = 100_000 # 숫자 표현 시 _로 구분이 가능하다
 print(f"n : {n}")
 # 리스트랑 배열을 0 ~ 99_999 데이터로 생성
 list_10m = list(range(n))
@@ -63,3 +64,18 @@ print(f" 데이터 {n:,}개 기준 ")
 print(f" - 리스트 : {list_bytes / 1024 / 1024:6.2f} MB")
 print(f" - 배열 : {arr_bytes / 1024 / 1024:6.2f} MB")
     # 10만 개 기준으로 약 2~3MB 정도 차이가 나는 것을 확인
+
+
+# ======================================================================
+# [실무 TIP] 리스트 반복문 vs 배열 벡터화 연산 속도 비교
+# 같은 계산이라도 넘파이 벡터화 연산이 파이썬 반복문보다 수십 배 이상 빠르다
+# ======================================================================
+import time
+start = time.perf_counter()
+squared_list = [x * x for x in list_10m]
+t_list = time.perf_counter() - start
+start = time.perf_counter()
+squared_arr = arr_10m * arr_10m
+t_arr = time.perf_counter() - start
+print(f"리스트: {t_list * 1000:.2f}ms / 배열: {t_arr * 1000:.2f}ms")
+print(f"[1, 2.5] > {np.array([1, 2.5]).dtype} / [1, '2'] > {np.array([1, '2']).dtype}")

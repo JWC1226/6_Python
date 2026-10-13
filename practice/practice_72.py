@@ -49,6 +49,7 @@ def save_chart(fig, filename):
 # 0. 가상 데이터셋 생성 (재현성 보장: np.random.seed(42))
 #    ※ 실제 서비스 지표가 아닌, 실습을 위한 가상(synthetic) 데이터입니다.
 np.random.seed(42)
+# [TIP] np.random.seed() 는 전역 상태를 바꾸는 예전 방식이고, 최신 코드는 rng = np.random.default_rng(42) 를 만들어 rng.normal(...) 처럼 사용한다
 YEARS = list(range(2022, 2027))  # 2022 ~ 2026, 5개년
 # 게임별 기본 속성(플랫폼/BM) 및 연도별 추세 파라미터
 #   base_*   : 2022년 기준값

@@ -74,6 +74,7 @@ for exporter in exp_list:
     print(f" {exporter.export(data)}")
 # Java: 공통 인터페이스 구현
 # Python: 동일한 메소드 존재 여부만으로 실행이 가능하다
+# [TIP] 객체가 특정 클래스(또는 그 자식 클래스)인지 확인할 때는 isinstance(obj, Account) 를 사용한다
 print("=" * 45)
 
 # 다중 상속: 여러 부모 클래스를 상속할 수 있다
@@ -90,3 +91,27 @@ class Product(Loggable, Serializable):
 p = Product("커피", 4500)
 print(f"{p.log('상품을 생성했습니다')}")
 print(f"dict >> {p.to_dict()}")
+
+
+# ======================================================================
+# [실무 TIP] 추상 클래스(abc) - Java 의 interface / abstract class 와 비슷한 역할
+# @abstractmethod 를 구현하지 않은 자식 클래스는 객체를 만들 수 없어서, '반드시 구현해야 하는 메소드'를 강제할 수 있다
+# ======================================================================
+from abc import ABC, abstractmethod
+
+class Exporter(ABC):
+    @abstractmethod
+    def export(self, data): ...
+
+class XmlExporter(Exporter):
+    def export(self, data):
+        return f"xml로 {len(data)}건 저장"
+
+class BrokenExporter(Exporter):
+    pass                                # export 를 구현하지 않음
+
+print(XmlExporter().export(data))
+try:
+    BrokenExporter()
+except TypeError as e:
+    print(f"TypeError: {e}")

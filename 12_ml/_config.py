@@ -22,5 +22,6 @@ def prices_path():
 
 def model_path(name="model_bundle.pkl"):
     """models 폴더 안에 파일 경로 반환"""
+    # [TIP] 학습한 모델은 joblib.dump(model, model_path()) 로 저장하고, joblib.load(model_path()) 로 불러와서 재사용한다
     os.makedirs(MODEL_DIR, exist_ok=True)
     return os.path.join(MODEL_DIR, name)

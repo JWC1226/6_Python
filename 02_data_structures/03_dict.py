@@ -10,6 +10,7 @@ user = {
     "skills": ["Java", "SQL", "html/css", "js", "Python"]
 }
 print(f"user: {user}")
+# [TIP] Python 3.7 부터 딕셔너리는 넣은 순서(삽입 순서)를 그대로 유지한다
 # 딕셔너리 내의 데이터 접근 > key 값으로 접근
 print(f"이름: {user['name']}")
 print(f"스킬: {user['skills']}")
@@ -49,3 +50,23 @@ print()
 print(f"Key 목록: {list(user.keys())}")
 print(f"Value 목록: {list(user.values())}")
 print(f"items(): {list(user.items())}")
+
+
+# ======================================================================
+# [실무 TIP] Counter / defaultdict / 딕셔너리 병합(|)
+# collections 모듈의 Counter(개수 세기), defaultdict(기본값 자동 생성)는 집계 코드에서 매우 자주 사용된다
+# ======================================================================
+from collections import Counter, defaultdict
+
+votes = ["Python", "Java", "Python", "SQL", "Python", "Java"]
+counter = Counter(votes)
+print(f"Counter: {counter} / 최다: {counter.most_common(1)}")
+
+groups = defaultdict(list)              # 없는 key 에 접근하면 빈 리스트를 자동으로 만들어준다
+for lang in votes:
+    groups[lang[0]].append(lang)        # 첫 글자를 기준으로 묶기
+print(f"defaultdict: {dict(groups)}")
+
+base = {"host": "localhost", "port": 8080}
+custom = {"port": 1521}
+print(f"병합: {base | custom}")          # 같은 key 는 뒤쪽 값이 우선 (Python 3.9+) / 이전 버전은 {**base, **custom}

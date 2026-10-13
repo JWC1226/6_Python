@@ -11,6 +11,7 @@ print(f"{'/stocks (SSR)':<20}{ssr.status_code:<8}{len(ssr.text):>12}")
 print(f"{'/csr/stocks (CSR)':<20}{csr.status_code:<8}{len(csr.text):>12}")
     # 렌더링 방식에 따라서 <body>가 비어있을 수 있음
     # csr일 때는 bs으로 파싱 할 수 없다!
+# [TIP] 개발자 도구(F12) > Network 탭에서 CSR 페이지가 호출하는 API(JSON)를 찾으면, 브라우저 없이 requests 로 더 빠르게 수집할 수 있는 경우가 많다
 # csr 본문 확인
 print("=" * 60)
 
@@ -20,7 +21,7 @@ print("=" * 160)
 
 KEYWORD = '가온전자'
 print(f"ssr >> {KEYWORD in ssr.text}")
-print(f"ssr >> {KEYWORD in csr.text}")
+print(f"csr >> {KEYWORD in csr.text}")
 print("=" * 30)
 
 """
@@ -56,6 +57,7 @@ with sync_playwright() as p:
         # domcotentLoaded: HTML을 다 읽고 DOM 트리가 만들어진 시점 (JS 실행 전)
         # load: 이미지를 포함한 모든 리소스가 로드된 시점 (기본값) = 느림
     page.wait_for_selector("tr.stock-row")
+    # [TIP] time.sleep() 으로 고정 시간을 기다리기보다 wait_for_selector 처럼 '조건'을 기다리는 방식이 빠르고 안정적이다
     # 해당 선택자(요소)가 DOM에 그려질 때까지 대기 (기다린다)
     count = page.locator("tr.stock-row").count()
     print(f"렌더링 후 가져온 행의 개수: {count}")
@@ -76,5 +78,5 @@ for data in items[:5]:
         page.screenshot(path="…/screenshot.png", full_page=True)
         open("capture.html", "w", encoding="utf-8").write(page.content())
     * 브라우저 콘솔
-        page.on("console", lambda m: print(f"[BROWSER] {m.text}))
+        page.on("console", lambda m: print(f"[BROWSER] {m.text}"))
 """

@@ -96,6 +96,7 @@ def time_split(df, test_size=0.2):
             분리된_학습용_데이터, 분리된_테스트용_데이터, 분리기준값
     """
     cutoff = df["date"].quantile(1-test_size)
+    # [TIP] 시간 순서를 지키면서 여러 번 나눠 평가(교차 검증)하려면 sklearn.model_selection.TimeSeriesSplit 을 사용한다
     train = df[df["date"] <= cutoff].reset_index(drop=True)
     test = df[df["date"] > cutoff].reset_index(drop=True)
     return train, test, cutoff

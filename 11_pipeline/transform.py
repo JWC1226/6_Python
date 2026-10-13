@@ -105,7 +105,7 @@ def clean_prices(records, logger):
     # TODO 9. 반올림 처리
         # OHLC > 실수 타입으로 처리(결측, 보간, ...)
         # DB(Oracle)에 해당 컬럼들이 NUMBER(20) 정수 형태이므로 반올림 처리
-    n_round = int((df[OHLC] % 1 != 0).sum())
+    n_round = int((df[OHLC] % 1 != 0).sum().sum())     # 열별 합계(Series) > 전체 합계(숫자)
     for col in OHLC:
         df[col] = df[col].round(0)
     logger.info(f"정수 반올림 처리 {len(df):,}행 (처리 대상: {n_round:,}개)")
@@ -113,10 +113,11 @@ def clean_prices(records, logger):
     # TODO 10. 등락, 등락률 재계산
             # 종가 보간, 반올림 처리를 하면서 데이터가 변경되었으므로 원본의 change, changeRate를 그대로 사용할 수 없다
     prev = df.groupby("code")["close"].shift(1)         # 종목별로 직전(전일) 종가를 구해준다
-    df["chsnge"] = (df["close"] - prev).round(0)
+    df["change"] = (df["close"] - prev).round(0)
     df["changeRate"] = ((df["close"] - prev) / prev * 100).round(2)
     return df
 
+# [TIP] 정제(clean_prices)와 검증(validate)을 함수로 분리해두면 pytest 같은 테스트 도구로 자동 검사하기 쉬워진다
 def validate(df, logger):
     """
         정제 작업 완료 후、검증 결과를 확인하는 함수

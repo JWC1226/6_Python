@@ -25,6 +25,7 @@ print(f"(12,) > (4, -1): \n{arr_2d_3}")
 
 arr_2d_4 = arr.reshape(-1, 6)
 print(f"(12,) > (-1, 6): \n{arr_2d_4}")
+# [TIP] 1차원 배열을 열 벡터 (n, 1) 로 바꿀 때 arr.reshape(-1, 1) 을 자주 사용한다 (scikit-learn 의 입력 X 는 2차원이어야 한다)
 # arr.reshape(-1, -1)
     # ValueError: can only specify one unknown dimension
 print("-" * 35) # --------------------------------------------------
@@ -37,7 +38,8 @@ print(f"shape: {arr_3d.shape}")
     # (12,) > (3, 2, -1)
 arr_3d_1 = arr.reshape(3,2,-1)
 print(f"(12,) > (3,2,-1): \n{arr_3d_1}")
-arr.reshape(2, -1, -1)
+# arr.reshape(2, -1, -1)
+    # ValueError: can only specify one unknown dimension (-1은 한 번만 사용 가능)
 print("-" * 35) # --------------------------------------------------
 
 # 多차원 > 1차원
@@ -54,3 +56,14 @@ arr_1d_3 = arr_3d.reshape(-1)
 print(f"reshape(-1): {arr_1d_3}")   # 뷰
 arr_1d_4 = arr_2d.reshape(-1)
 print(f"reshape(-1): {arr_1d_4}")
+
+
+# ======================================================================
+# [실무 TIP] 전치(.T)와 축 추가(np.newaxis)
+# .T 는 행과 열을 뒤바꾸고, np.newaxis(None)는 크기 1인 축을 추가한다 (브로드캐스팅 전에 모양을 맞출 때 사용)
+# ======================================================================
+m = np.arange(6).reshape(2, 3)
+print(f"m.shape {m.shape} > m.T.shape {m.T.shape}")
+v = np.array([1, 2, 3])
+print(f"v[:, np.newaxis].shape: {v[:, np.newaxis].shape}")    # (3,) > (3, 1)
+print(f"v[np.newaxis, :].shape: {v[np.newaxis, :].shape}")    # (3,) > (1, 3)

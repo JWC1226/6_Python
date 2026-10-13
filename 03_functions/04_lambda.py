@@ -24,8 +24,9 @@ result = list(map(lambda x: x * 2, numbers))
 print(f"map 활용한 결과 도출: {result}")
 
 # filter(): 조건을 만족하는 요소만 가지고 새로운 이터레이터를 반환한다
-list(filter(lambda x: x % 2 == 0, numbers))
+result = list(filter(lambda x: x % 2 == 0, numbers))
 print(f"filter 적용한 결과: {result}")
+# [TIP] map/filter 대신 리스트 컴프리헨션([x * 2 for x in numbers])이 더 읽기 쉬워서 실무에서는 컴프리헨션을 더 많이 사용한다
 
 # sorted(): 데이터를 정렬시켜주는 함수
 numbers = [15, 26, 7, 3, 41, 17]
@@ -72,3 +73,15 @@ print(f"최소값: {min(numbers)}")
 print("=" * 40)
 print(f"any: {any(n > 5 for n in numbers)}")
 print(f"all: {all(n > 5 for n in numbers)}")
+
+
+# ======================================================================
+# [실무 TIP] 여러 기준으로 정렬하기 / operator.itemgetter
+# key 가 튜플을 반환하면 첫 번째 기준이 같을 때 두 번째 기준으로 정렬한다 (숫자는 - 를 붙이면 내림차순)
+# ======================================================================
+from operator import itemgetter
+
+products.append({"name": "Blue Bottle", "price": 4600})
+for p in sorted(products, key=lambda p: (-p["price"], p["name"])):    # 가격 내림차순 > 이름 오름차순
+    print(f"{p['name']:<20} {p['price']:,}")
+print(max(products, key=itemgetter("price")))                       # lambda p: p["price"] 와 동일

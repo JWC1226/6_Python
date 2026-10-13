@@ -25,7 +25,8 @@ def count_rows():
     with conn.cursor() as cur:
         cur.execute("SELECT COUNT(*) FROM daily_price")
         return cur.fetchone()[0]
-INSERT_SQL = f"""INSSERT INTO daily_price (code, "date", open, high, low, close, volume, "change", "changeRate")"""
+INSERT_SQL = """INSERT INTO daily_price (code, "date", open, high, low, close, volume, "change", "changeRate")
+                VALUES (:1, :2, :3, :4, :5, :6, :7, :8, :9)"""
 
 # itertuples() > 행 단위로 데이터를 가져온다・속도가 조금 더 빠르다
 rows = [tuple(r) for r in sample.itertuples(index=False)] 
@@ -46,6 +47,7 @@ t1 = time.perf_counter() - start
 results.append(("1. execute 반복", t1, count_rows()))
 
 # 2. executemany > 같은 SQL을 한 문장으로 한 번에 실행
+# [TIP] executemany(sql, rows, batcherrors=True) 를 사용하면 일부 행이 실패해도 나머지는 적재하고, cur.getbatcherrors() 로 실패한 행을 확인할 수 있다
 reset_table()
 start = time.perf_counter()
 with conn.cursor() as cur:
@@ -76,4 +78,4 @@ results.append(("2. executemany", t2, count_rows()))
 # ======================================================================
 print("-" * 40) # ------------------------------------------------------
 for name, t, n in results:
-    print(f"{name:<20} {t*1000:>8.0}ms {n:>8,}")
+    print(f"{name:<20} {t*1000:>8.0f}ms {n:>8,}")

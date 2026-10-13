@@ -13,6 +13,7 @@ ENCODING = "utf-8-sig"
 STEP_DIR = DATA_DIR / "steps"
 # 폴더가 없으면 생성
 STEP_DIR.mkdir(parents=True, exist_ok=True)
+# [TIP] parents=True 는 상위 폴더까지 함께 만들고, exist_ok=True 는 이미 있어도 오류를 내지 않는다
 
 def step_path(filename):
     """단계별 저장된 파일 경로 반환"""

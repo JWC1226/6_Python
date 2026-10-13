@@ -7,6 +7,7 @@ from _db import connect, get_engine, ENCODING, KHLAB_BASE, data_path, prices_pat
 # 환경 변수 기반 설정 ==============================================================================
 SOURCE = os.getenv("PIPELINE_SOURCE", "csv")            # Extract 방식: "api" or "csv"
 MAX_PAGES = int(os.getenv("PIPELINE_MAX_PAGES", 5))     # API 페이지 상한
+# [TIP] os.getenv 의 반환값은 항상 문자열이라서 숫자 설정은 int() 로 변환해서 사용해야 한다
 
 # 고정 상수 =======================================================================================
 PAGE_SIZE = 100         # 한 페이지에 요청할 데이터 수 (n건)

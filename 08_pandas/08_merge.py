@@ -26,8 +26,9 @@ print(f"종목 개수: {len(companies)}")
 
 # prices + companies
 m = prices.merge(companies, on='code', how='left')
+# [TIP] merge(..., validate="many_to_one") 을 지정하면 오른쪽 key 가 중복일 때 오류를 내서, 행이 몰래 늘어나는 사고를 막을 수 있다 (파일 하단 참고)
 print(f"prices + companies :: how=left")
-print(f" - prices: {prices.shpae}")
+print(f" - prices: {prices.shape}")
 print(f" - nerged: {m.shape}")
 p2 = prices.head(3).copy()
 p2['name'] = '시세데이터_이름'
@@ -99,3 +100,20 @@ print(f"{chk['_merge'].value_counts()}")
     # right_only: 오른쪽(part)에서 옴
     # how=inner 로 머지했을 때, 행이 줄었다면 확인이 어려우므로
         # how=outer, indicator=True 설정하여 어떤 데이터가 빠졌는 지 확인할 수 있다 !
+
+
+# ======================================================================
+# [실무 TIP] merge 전에 key 정규화 + validate 로 관계 검증
+# 공백·대소문자·전각 문제는 merge 전에 정리하고, validate 로 관계(1:1, N:1)가 기대와 같은지 확인한다
+# ======================================================================
+import unicodedata
+
+fixed = raw_comp.copy()
+fixed["name"] = fixed["name"].map(lambda s: unicodedata.normalize("NFKC", s)).str.strip()   # 전각 > 반각, 앞뒤 공백 제거
+fixed["market"] = fixed["market"].str.upper()
+print(f"정규화 후 market: {fixed['market'].unique().tolist()} / 전각 문자 행: {fixed['name'].map(has_fullwidth).sum()}건")
+try:
+    prices.merge(raw_comp[["code", "name"]], on="code", how="left", validate="many_to_one")
+    print("validate 통과: 오른쪽 code 가 중복되지 않음")
+except Exception as e:                                  # pandas.errors.MergeError
+    print(f"validate 실패 > {type(e).__name__}: {str(e).splitlines()[0]}")

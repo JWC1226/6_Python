@@ -22,6 +22,7 @@ class Customer:
         self.contact = contact          # 연락처 (중복 등록 방지 대상)
         self.points = points            # 누적 포인트 (기본값 0)
 
+    # [TIP] 부모를 abc.ABC 로, add_purchase 를 @abstractmethod 로 만들면 구현을 빠뜨린 자식 클래스는 객체 생성 시점에 바로 오류가 난다 (04_oop/04_inherit.py 하단 참고)
     def add_purchase(self, amount):
         # 구매 금액(amount)을 입력받아 포인트를 적립하는 메서드
         # 실제 적립률은 등급별로 다르므로 자식 클래스에서 "반드시" 오버라이딩

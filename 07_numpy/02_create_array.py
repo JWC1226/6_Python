@@ -12,6 +12,7 @@ print(f"1로　 채워서 베열 셍상: {np.ones(5)}")                      # f
 print(f"특정 값으로 채워서 배열 생성: {np.full(5, 7)}")
 print(f"0부터 9까지 정수를 생성하여 배열 생성: {np.arange(10)}")
 print(f"0부터 100까지 5등분하여 배열 생성: {np.linspace(0, 100, 5)}")
+# [TIP] arange 는 '간격'을, linspace 는 '개수'를 지정한다 (실수 간격은 오차가 생길 수 있어 linspace 가 안전하다)
 print("-" * 60)
 
 # 속성
@@ -45,3 +46,14 @@ print(f"shape: {prices.shape}")
 print(f"ndim: {prices.ndim}")
 print(f"size: {prices.size}")
 print(f"dtype: {prices.dtype}")
+
+
+# ======================================================================
+# [실무 TIP] 난수 배열 생성 - np.random.default_rng(seed)
+# 최신 넘파이에서 권장하는 난수 생성 방식이며, seed 를 고정하면 실행할 때마다 같은 난수가 나온다 (재현성)
+# ======================================================================
+rng = np.random.default_rng(42)
+print(f"정수 난수: {rng.integers(1, 46, size=6)}")                 # 1 ~ 45 사이 정수 6개
+print(f"정규분포: {rng.normal(loc=0, scale=1, size=3).round(3)}")   # 평균 0, 표준편차 1
+print(f"섞기: {rng.permutation(5)}")
+print(f"단위 행렬: \n{np.eye(3, dtype=int)}")

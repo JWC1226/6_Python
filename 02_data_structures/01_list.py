@@ -9,6 +9,7 @@ print(f"첫 번째: {colors[0]}")
 # 마지막 요소 출력
 print(f"마지막: {colors[-1]}")
 print(f"{colors[0:2]}")
+# [TIP] b = a 는 복사가 아니라 같은 리스트를 가리키게 하는 것이다 → 독립된 복사본이 필요하면 a.copy() 또는 a[:] 를 사용한다
 
 # 다양한 타입의 데이터를 담을 수 있다
 mixed = [100, "Hello", True, [1,2,3]]
@@ -60,6 +61,7 @@ print(f"numbers에서 3의 개수: {numbers.count(3)}")
 print(f"리스트 길이: {len(numbers)}")
 print(f"{numbers}")
 numbers.sort()                      # 해당 리스트의 값을 변경
+# [TIP] 원본은 유지하고 정렬된 '새 리스트'가 필요하면 sorted(numbers) 를 사용한다
 print(f"sort > {numbers}")
 numbers.sort(reverse=True)
 print(f"sort(reverse=True) > {numbers}")
@@ -84,3 +86,15 @@ for row in matrix:
     for value in row:
         print(value, end=" ")
     print()
+
+
+# ======================================================================
+# [실무 TIP] 2차원 리스트를 만들 때 주의 - [[0] * 3] * 3
+# 바깥쪽 * 3 은 같은 리스트를 3번 '참조'하기 때문에 한 칸만 바꿔도 모든 행이 바뀐다 → 컴프리헨션으로 행마다 새로 만들어야 한다
+# ======================================================================
+wrong = [[0] * 3] * 3
+wrong[0][0] = 1
+print(f"wrong: {wrong}")         # [[1, 0, 0], [1, 0, 0], [1, 0, 0]]
+right = [[0] * 3 for _ in range(3)]
+right[0][0] = 1
+print(f"right: {right}")         # [[1, 0, 0], [0, 0, 0], [0, 0, 0]]

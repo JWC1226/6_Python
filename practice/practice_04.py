@@ -7,6 +7,7 @@ import numpy as np
 
 sys.path.append(str(Path(__file__).resolve().parent.parent / "07_numpy"))
 from load_utils import load_one_stock, load_dates, load_matrix
+# [TIP] sys.path 를 직접 수정하는 방식은 간단하지만, 프로젝트가 커지면 공통 모듈을 패키지로 만들어 import 하는 방식이 더 안정적이다
 
 # 1. 다음 리스트 [1, 2, 3, 4, 5]를 ndarray로 변환하고, 배열의 차원(ndim)과 형태(shape)을 출력하시오
 arr1 = np.array([1, 2, 3, 4, 5])

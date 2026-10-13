@@ -64,9 +64,21 @@ print(f"종목 별 보간 처리 후: {pola}")
 # > 종목의 맨 앞/뒤에 남은 결측 개수
     # .ffill() : 결측을 바로 앞의 값으로 채운다
     # .bfill() : 결측을 바로 뒤의 값으로 채운다
+    # [TIP] 예전 코드의 fillna(method="ffill") 은 pandas 2.1 부터 권장되지 않는다 → .ffill() / .bfill() 메소드를 사용한다
 for col in OHLC:
     df[col] = df.groupby('code')[col].transform(lambda s: s.ffill().bfill())
 fb = df[OHLC].isna().sum().sum()
 print(f"ffill + bfill 처리 후: {fb}")
 
 # 거래량(volume)은 결측 유지
+
+
+# ======================================================================
+# [실무 TIP] dropna(thresh) / fillna(딕셔너리)
+# thresh=n 은 '결측이 아닌 값이 n개 이상인 행만 남긴다', fillna 에 딕셔너리를 주면 열마다 다른 값으로 채울 수 있다
+# ======================================================================
+print(f"volume 결측: {df['volume'].isna().sum()}")
+kept = df.dropna(thresh=len(df.columns) - 1)            # 결측이 1개 이하인 행만 유지
+print(f"dropna(thresh): {len(df)} > {len(kept)}행")
+filled = df.fillna({"volume": 0})                      # 문법 예시 (실제로는 위 설명처럼 volume 을 0으로 채우면 안 된다)
+print(f"fillna(dict) 후 volume 결측: {filled['volume'].isna().sum()}")

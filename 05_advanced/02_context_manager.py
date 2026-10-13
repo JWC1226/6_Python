@@ -15,6 +15,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # os.path.abspath(__file__) : 절대 경로를 반환한다.
 # os.path.dirname(path) : 경로에서 폴더 경로만 반환한다.
 print(BASE_DIR)
+# [TIP] os.path 대신 pathlib 을 사용하는 추세이다 → Path(__file__).resolve().parent / "_sample.txt" (파일 하단 참고)
 TXT_PATH = os.path.join(BASE_DIR, "_sample.txt")
 JSON_PATH = os.path.join(BASE_DIR, "_sample.json")
 print(f"TXT_PATH: {TXT_PATH}")
@@ -65,3 +66,26 @@ print(f"type > {type(json_contents)}")
 for c in json_contents:
     # print(f"data type > {type(c)}")
     print(f"{c['name']}, {c['price']}")
+
+
+# ======================================================================
+# [실무 TIP] pathlib 으로 파일 읽기 / @contextmanager 로 with 문 직접 만들기
+# contextlib.contextmanager 를 사용하면 yield 앞은 '진입 시', 뒤(finally)는 '종료 시' 실행되는 with 문을 간단히 만들 수 있다
+# ======================================================================
+import time
+from pathlib import Path
+from contextlib import contextmanager
+
+sample = Path(__file__).resolve().parent / "_sample.txt"
+print(sample.read_text(encoding="utf-8").splitlines())     # open/close 없이 한 번에 읽기
+
+@contextmanager
+def timer(label):
+    start = time.perf_counter()
+    try:
+        yield                           # with 블록 안의 코드가 실행되는 지점
+    finally:
+        print(f"[{label}] {time.perf_counter() - start:.4f}초")
+
+with timer("합계 계산"):
+    total = sum(range(1_000_000))

@@ -43,6 +43,7 @@ class SafeAccount:
         if value < 0:
             self.__balance = 0
             return                  # return 뒤에 값을 넣지 않으면 그냥 종료
+            # [TIP] 잘못된 값을 조용히 0으로 바꾸기보다 raise ValueError(...) 로 알려주는 편이 버그를 빨리 찾을 수 있다
         self.__balance = value
     @property
     def info(self):
@@ -56,3 +57,23 @@ print(f"sa.balance: {sa.balance}")
 # print(f"sa.balance: {sa.balance}")
 print(f"sa.info: {sa.info}")
 print("=" * 50)
+
+
+# ======================================================================
+# [실무 TIP] setter 없이 @property 만 정의 → 읽기 전용 속성
+# 외부에서 값을 바꾸려고 하면 AttributeError 가 발생한다 / 계산된 값(파생 값)을 속성처럼 제공할 때도 사용한다
+# ======================================================================
+class Rectangle:
+    def __init__(self, width, height):
+        self._width = width
+        self._height = height
+    @property
+    def area(self):
+        return self._width * self._height
+
+r = Rectangle(3, 4)
+print(f"area: {r.area}")
+try:
+    r.area = 100
+except AttributeError as e:
+    print(f"읽기 전용: {e}")

@@ -23,6 +23,7 @@ def step1_packages():
     for mod, desc in need.items():
         try:
             m = __import__(mod)
+            # [TIP] __import__(문자열) 보다 importlib.import_module(문자열) 사용이 권장된다 (동작은 같음)
             ver = getattr(m, '__version__', '')
             print(f"[ OK ] {mod:<14}{ver:<12}{desc}")
         except ImportError:
@@ -77,7 +78,7 @@ def step3_connect():
     """오라클 접속 확인"""
     import oracledb
     from dotenv import load_dotenv
-    load_dotenv
+    load_dotenv()   # 괄호가 없으면 함수가 호출되지 않는다
 
     try:
         conn = oracledb.connect(

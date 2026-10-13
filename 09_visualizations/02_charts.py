@@ -28,6 +28,7 @@ fig, axes = plt.subplots(1, 2, figsize=(13, 4))
     # 값을 bins개의 구간으로 나누어서 각 구간에 몇 개의 데이터가 있는지 표시
     # hist는 NaN(결측)을 만나면 범위 계산이 깨진다 ! > dropna() 선행
 axes[0].hist(df["ret"].dropna(), bins=60, color="steelblue")
+# [TIP] seaborn 의 sns.histplot(data=df, x="ret", kde=True) 를 사용하면 히스토그램과 밀도 곡선을 함께 그릴 수 있다 (파일 하단 참고)
 axes[0].set_title("일간 수익률 분포")
 axes[0].set_xlabel("수익률(%)")
 axes[0].set_ylabel("빈도")
@@ -109,5 +110,19 @@ ax.tick_params(axis="x", rotation=30)
 fig.savefig(out("07_bar.png"), dpi=120)
 plt.close(fig)
 
-by_sector = df.groupby("sector")["ret"].agg("mean", "std", "count")
+by_sector = df.groupby("sector")["ret"].agg(["mean", "std", "count"])   # 여러 함수는 리스트로 전달
 print(by_sector.round(4))
+
+
+# ======================================================================
+# [실무 TIP] seaborn histplot + hue - 그룹별 분포 겹쳐 보기
+# hue 에 범주 열을 지정하면 그룹마다 색을 나눠 그리고, stat="density" + common_norm=False 로 그룹 크기가 달라도 모양을 비교할 수 있다
+# ======================================================================
+two_sectors = df[df["sector"].isin(sorted(df["sector"].unique())[:2])]
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.histplot(data=two_sectors, x="ret", hue="sector", bins=80, stat="density",
+             common_norm=False, element="step", kde=True, ax=ax)
+ax.set_xlim(-10, 10)
+ax.set_title("섹터별 일간 수익률 분포 비교")
+fig.savefig(out("tip_02_histplot_hue.png"), dpi=120)
+plt.close(fig)

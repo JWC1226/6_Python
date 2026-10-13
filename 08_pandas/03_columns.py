@@ -17,6 +17,7 @@ print("-" * 85) # --------------------------------------------------
 # 새로운 열(컬럼) 추가
 day['range'] = day['high'] - day['low']        # 최고가 - 최저가
 day['range_pct'] = day['range'] / day['low'] * 100
+# [TIP] df.assign(새열=값) 을 사용하면 원본은 그대로 두고 열이 추가된 새 DataFrame 을 반환한다 (메소드 체이닝에 유용, 파일 하단 참고)
 print(day.head())
 
 day['temp'] = 0
@@ -55,3 +56,17 @@ print(f"결측: {c.isna().sum()}")
     astype은 하나라도 값이 이상하면 전체를 변경할 수 없음 !
     to_numeric(errors='coerce')은 오염된 데이터를 강제로 nan(결측)으로 남기고、나머지는 변경 !
 """
+
+
+# ======================================================================
+# [실무 TIP] assign + np.where / pd.cut - 조건에 따라 열 만들기
+# np.where 는 조건이 2가지일 때, pd.cut 은 숫자를 구간(범주)으로 나눌 때 사용한다
+# ======================================================================
+import numpy as np
+
+result = day.assign(
+    direction=np.where(day["changeRate"] > 0, "상승", "하락/보합"),
+    price_level=pd.cut(day["close"], bins=[0, 10_000, 50_000, float("inf")], labels=["저가", "중가", "고가"]),
+)
+print(result[["code", "close", "changeRate", "direction", "price_level"]].head())
+print(result["price_level"].value_counts())

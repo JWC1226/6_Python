@@ -19,13 +19,14 @@ print(df[['close', 'volume', 'high', 'low']].describe())
 # int64 타입인 'high', 'low' 정상적으로 값이 출력
 # str 타입인 'close', 'volume' 값이 출력되지 않는다 !
 
-# df.close(): 행 수, 열 이름, non-null 개수, dtype 을 출력
+# df.info(): 행 수, 열 이름, non-null 개수, dtype 을 출력
 df.info()
 # non-null 개수를 통해 전체 행수와 다르면 결측이 있다고 판단
 
 # 결측률
     # df.isnull() / df.isna()
 na = df.isnull().sum()
+# [TIP] df.isna().mean() * 100 으로 열별 결측률(%)을 한 줄로 구할 수 있다 (True=1, False=0 의 평균)
 print(f"{'열':<14}{'결측 수':<14}{'비율':<14}")
 for col in df.columns:
     if na[col] > 0:
@@ -85,7 +86,7 @@ lens = df['date'].astype(str).str.len().value_counts()
 print(f"20260918 형식: {lens.get(8, 0)}")
 
 # 2. 패턴 검색 : .str.contains()
-dot_cnt = df['data'].astype(str).str.contains(r"\.", regex=True).sum()
+dot_cnt = df['date'].astype(str).str.contains(r"\.", regex=True).sum()
 print(f"2026.09.18 형식: {dot_cnt}건")
 print(f"2026-09-18 형식: {lens.get(10, 0) - dot_cnt}건")
 
@@ -119,3 +120,16 @@ print(f"{'행수':<24} {len(df):<14} {'90,000':<14}")
 print(f"{'종목수':24} {df['code'].nunique():<14} {'120':<14}")
 print(f"{'종목별 행수(최소 ~ 최대)':<18}"
       f"{str(df.groupby('code').size().min()) + '~' + str(df.groupby('code').size().max()):<14} {'750':<14}")
+
+
+# ======================================================================
+# [실무 TIP] 진단 요약표 한 번에 만들기
+# 타입, 결측 수, 결측률, 고유값 수를 하나의 DataFrame 으로 모아두면 정제 전/후를 비교하기 편리하다
+# ======================================================================
+report = pd.DataFrame({
+    "dtype": df.dtypes.astype(str),
+    "결측수": df.isna().sum(),
+    "결측률(%)": (df.isna().mean() * 100).round(2),
+    "고유값수": df.nunique(),
+})
+print(report)

@@ -35,7 +35,7 @@ def setup(name="pipeline", level=logging.INFO):
     os.makedirs(LOG_DIR, exist_ok=True)
     
     # 저장될 로그 파일 설정 (YYYYmmdd.log > 20261001.log)
-    path = os.path.koin(LOG_DIR, f"{datetime.now():%Y%m%d}.log")
+    path = os.path.join(LOG_DIR, f"{datetime.now():%Y%m%d}.log")
 
     # Logger 객체 생성
     logger = logging.getLogger(name)
@@ -64,4 +64,5 @@ def setup(name="pipeline", level=logging.INFO):
     file = logging.FileHandler(path, encoding="utf-8")
     file.setFormatter(fmt)
     logger.addHandler(file)
+    # [TIP] except 블록 안에서 logger.exception("메시지") 를 호출하면 메시지와 함께 Traceback 전체가 로그에 남는다
     return logger

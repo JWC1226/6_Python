@@ -27,6 +27,7 @@ acc = Account("사용자", 10000)
 print(f"owner: {acc.owner}")
 print(f"balance: {acc.balance}")
 print(f"deposit: {acc.deposit(7000)}")
+# [TIP] print(acc) 를 했을 때 보기 좋게 출력하려면 __str__ 메소드를 정의한다 (02_method.py 하단 참고)
 print("=" * 30)
 
 # 인스턴스 변수 vs 클래스 변수
@@ -52,3 +53,21 @@ print(f"Member.team_name: {Member.team_name}")
 Member.team_name = "rescene"
 print(f"Member.team_name: {Member.team_name}")
 print("=" * 30)
+
+
+# ======================================================================
+# [실무 TIP] @dataclass - 데이터를 담는 클래스를 간단하게
+# __init__, __repr__, __eq__ 를 자동으로 만들어주기 때문에 DTO, 설정값처럼 '데이터 묶음' 클래스에 많이 사용한다
+# ======================================================================
+from dataclasses import dataclass, field
+
+@dataclass
+class Product:
+    name: str
+    price: int
+    tags: list[str] = field(default_factory=list)    # 가변 기본값은 default_factory 로 지정
+
+p1 = Product("아메리카노", 4500)
+p2 = Product("아메리카노", 4500)
+print(p1)                               # Product(name='아메리카노', price=4500, tags=[])
+print(f"p1 == p2 : {p1 == p2}")          # 값이 같으면 True (__eq__ 자동 생성)
